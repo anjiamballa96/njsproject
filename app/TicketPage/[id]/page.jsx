@@ -2,7 +2,7 @@ import React from 'react'
 
 const  TicketPage = ({params}) => {
   return (
-    <div>TicketPage {params.id}</div>
+    <div>TicketPage1 {params.id}</div>
   )
 }
 
