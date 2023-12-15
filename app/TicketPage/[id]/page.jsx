@@ -1,9 +1,12 @@
-import React from 'react'
+import React from "react";
+import TicketForm from "../../(Components)/TicketForm";
 
-const  TicketPage = ({params}) => {
+const TicketPage = ({ params }) => {
   return (
-    <div>TicketPage1 {params.id}</div>
-  )
-}
+  <div className="mt-2">
+    <TicketForm />
+  </div>
+  );
+};
 
-export default TicketPage
+export default TicketPage;
