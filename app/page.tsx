@@ -1,7 +1,30 @@
 import Image from 'next/image'
 import TicketCard from "./(Components)/TicketCard"
 
-const Home = () => {
+const getTickets = async () => {
+  try {
+    const res = await fetch("/api/Tickets", {
+      method: "GET",
+    })
+      .then(ress => {
+        debugger
+        return ress
+      }).catch(err => {
+        return err
+      })
+
+    return res.json()
+  } catch (error) {
+    console.log("error", error)
+  }
+}
+
+const Home = async () => {
+  const tickets  = await getTickets();
+  debugger
+  // const a = tickets?.map(({category}) => category)
+  const uniqueCategories = [...Array.from(new Set())]
+
   return <>
     <div className='p-5'>
       <div className='lg:grid grid-cols-2 xl:grid-cols-4'>
