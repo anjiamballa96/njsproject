@@ -6,13 +6,12 @@ import Loading from "./Loading";
 const TicketForm = ({ ticket }) => {
   const router = useRouter();
 
-  const EditMode = ticket?._id == "new" ? false : true;
-
+  const EditMode = ticket?._id ? true : false;
   const startingTicketData = {
     title: "",
     description: "",
     category: "",
-    priority: 1,
+    priority: null,
     progress: 0,
     status: "",
   };
@@ -43,7 +42,7 @@ const TicketForm = ({ ticket }) => {
     e.preventDefault();
     // setLoading(true);
     if (EditMode) {
-      const res = await fetch(`/api/Tickets/${ticket._id}`, {
+      const res = await fetch(`/api/Tickets/${ticket?._id}`, {
         method: "PUT",
         body: JSON.stringify({ formData }),
         "content-type": "application/json",
@@ -75,7 +74,7 @@ const TicketForm = ({ ticket }) => {
           method="post"
           onSubmit={handleSubmit}
         >
-          <h3>Create Your Ticket</h3>
+          <h3>{EditMode ? "Update" : "Create"} Your Ticket</h3>
           <label>Title</label>
           <input
             id="title"
@@ -101,6 +100,7 @@ const TicketForm = ({ ticket }) => {
             value={formData.category}
             onChange={handleChange}
           >
+            <option>--Select option--</option>
             <option value="Hardware Problem">Hardware Problem</option>
             <option value="Software Problem">Software Problem</option>
             <option value="Project">Project</option>
@@ -171,11 +171,12 @@ const TicketForm = ({ ticket }) => {
           />
           <label>Status</label>
           <select name="status" value={formData.status} onChange={handleChange}>
+            <option>--Select option--</option>
             <option value="not started">Not Started</option>
             <option value="started">Started</option>
             <option value="done">Done</option>
           </select>
-          <input type="submit" className="btn max-w-xs" value="Create Ticket" />
+          <input type="submit" className="btn max-w-xs" value={`${EditMode ? "Update" : "Create"} Ticket`}/>
         </form>
       </div>
     </>
