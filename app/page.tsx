@@ -1,18 +1,15 @@
 import Image from 'next/image'
-import TicketCard from "./(Components)/TicketCard"
+import TicketCard from "./(components)/TicketCard"
 
 const getTickets = async () => {
   try {
-    const res = await fetch("/api/Tickets", {
-      method: "GET",
+    const res = await fetch("http://localhost:3000/api/Tickets", {
+      cache: "no-store"
     })
-      .then(ress => {
-        debugger
-        return ress
-      }).catch(err => {
-        return err
-      })
 
+    if (!res.ok) {
+      throw new Error("Failed to fetch topics");
+    }
     return res.json()
   } catch (error) {
     console.log("error", error)
@@ -20,18 +17,26 @@ const getTickets = async () => {
 }
 
 const Home = async () => {
-  const tickets  = await getTickets();
-  debugger
-  // const a = tickets?.map(({category}) => category)
-  const uniqueCategories = [...Array.from(new Set())]
+  const data = await getTickets();
 
+  if (!data.tickets) {
+    return <p>No Tickets</p>
+  }
+
+  const tickets = data.tickets
+  // const a = tickets?.map(({category}) => category)
+  // const uniqueCategories = [...new Set()]
+  // const uniqueCategories = [
+  //   ...new Set(tickets?.map(({ category }) => category)),
+  // ];
   return <>
     <div className='p-5'>
       <div className='lg:grid grid-cols-2 xl:grid-cols-4'>
-        <TicketCard />
-        <TicketCard />
-        <TicketCard />
-        <TicketCard />
+        {tickets.map((ticket, i) => (
+          <>
+            <TicketCard ticket={ticket} key={i} id={i} />
+          </>
+        ))}
       </div>
     </div>
   </>

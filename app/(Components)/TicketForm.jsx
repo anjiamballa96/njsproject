@@ -3,8 +3,10 @@
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import Loading from "./Loading";
-const TicketForm = () => {
+const TicketForm = ({ ticket }) => {
   const router = useRouter();
+
+  const EditMode = ticket?._id == "new" ? false : true;
 
   const startingTicketData = {
     title: "",
@@ -14,6 +16,15 @@ const TicketForm = () => {
     progress: 0,
     status: "",
   };
+
+  if (EditMode) {
+    startingTicketData["title"] = ticket?.title;
+    startingTicketData["description"] = ticket?.description;
+    startingTicketData["category"] = ticket?.category;
+    startingTicketData["priority"] = ticket?.priority;
+    startingTicketData["progress"] = ticket?.progress;
+    startingTicketData["status"] = ticket?.status;
+  }
 
   const [formData, setFormData] = useState(startingTicketData);
   const [loading, setLoading] = useState(false);
@@ -31,18 +42,28 @@ const TicketForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     // setLoading(true);
-    const res = await fetch("/api/Tickets", {
-      method: "POST",
-      body: JSON.stringify({ formData }),
-      "content-type": "application/json",
-    });
-    if (!res.ok) {
-      throw new Error("Failed to create ticket");
+    if (EditMode) {
+      const res = await fetch(`/api/Tickets/${ticket._id}`, {
+        method: "PUT",
+        body: JSON.stringify({ formData }),
+        "content-type": "application/json",
+      });
+      if (!res.ok) {
+        throw new Error("Failed to update ticket");
+      }
     } else {
-      // setLoading(false);
-      router.refresh();
-      router.push("/");
+      const res = await fetch("/api/Tickets", {
+        method: "POST",
+        body: JSON.stringify({ formData }),
+        "content-type": "application/json",
+      });
+      if (!res.ok) {
+        throw new Error("Failed to create ticket");
+      }
     }
+
+    router.push("/");
+    router.refresh();
   };
 
   return (
